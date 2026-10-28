@@ -13,8 +13,8 @@
     ]
   },
   "tasks": {
-    "test": "deno test --cached-only --deny-net --allow-read=. --allow-write=/tmp --allow-run=git tests",
-    "typecheck": "deno check --cached-only supabase/functions/*/index.ts tests/*.test.ts scripts/*.ts",
+    "test": "deno test --cached-only --no-remote --no-npm --deny-net --allow-read=.,/tmp --allow-write=/tmp --allow-run=git tests",
+    "typecheck": "deno check --no-remote --no-npm supabase/functions/*/index.ts tests/*.test.ts scripts/*.ts",
     "lint": "deno lint",
     "fmt:check": "deno fmt --check",
     "proof": "deno run --cached-only --deny-net --allow-read --allow-write --allow-run=deno,git scripts/prove-injections.ts"
@@ -23,7 +23,8 @@
     "exclude": [
       "supabase/functions/_shared/verify.ts",
       "fixtures/"
-    ]
+    ],
+    "proseWrap": "preserve"
   },
   "lint": {
     "exclude": [

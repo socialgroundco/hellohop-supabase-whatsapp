@@ -1,17 +1,192 @@
 import { createWebhookHandler } from "../supabase/functions/hellohop-webhook/index.ts";
 import { assert, fixture, rawFixture, secret, sign } from "./helpers.ts";
-const env=(name:string)=>({HELLOHOP_WEBHOOK_SECRET:secret,SUPABASE_URL:"https://example.supabase.co",SUPABASE_SERVICE_ROLE_KEY:"<SERVICE_ROLE_KEY>"})[name as "HELLOHOP_WEBHOOK_SECRET"];
-const request=async(raw=rawFixture(),signature?:string)=>new Request("https://example.com/webhook",{method:"POST",body:raw,headers:{"X-HelloHop-Signature":signature??await sign(raw)}});
-function setup(status=201){const calls:{url:string;init:RequestInit}[]=[];const stored=new Map<string,unknown>(); const handler=createWebhookHandler(env,((url,init)=>{calls.push({url:String(url),init:init!});const row=JSON.parse(String(init!.body));if(!stored.has(row.event_id))stored.set(row.event_id,row);return Promise.resolve(new Response(null,{status}));}) as typeof fetch);return {calls,stored,handler};}
-Deno.test("hellohop-webhook: valid signature -> 200 and the database stores the minimum message once",async()=>{const {calls,stored,handler}=setup();assert.equal((await handler(await request())).status,200);assert.equal(calls.length,1);assert.equal(stored.size,1);assert.deepEqual([...stored.values()][0],{event_id:fixture("delivery-message").id,message_id:"3EB0C767D26A1D8E2A41",chat_jid:"66XXXXXXXXX@s.whatsapp.net",sender_jid:"66XXXXXXXXX@s.whatsapp.net",type:"text",text:"<MESSAGE_TEXT>",from_me:false,is_group:false,sent_at:"2026-09-17T03:00:00Z"});assert.equal(new URL(calls[0].url).pathname,"/rest/v1/whatsapp_messages");assert.equal(calls[0].init.method,"POST");const headers=new Headers(calls[0].init.headers);assert.equal(headers.get("Authorization"),"Bearer <SERVICE_ROLE_KEY>");assert.equal(headers.get("apikey"),"<SERVICE_ROLE_KEY>");});
-Deno.test("hellohop-webhook: bad signature -> 401 and the database is never called",async()=>{const {handler,calls}=setup();assert.equal((await handler(await request(rawFixture(),"0".repeat(64)))).status,401);assert.equal(calls.length,0);});
-Deno.test("hellohop-webhook: webhook.test event -> 200 and no message is stored or sent",async()=>{const {handler,calls}=setup();assert.equal((await handler(await request(JSON.stringify(fixture("delivery-test"))))).status,200);assert.equal(calls.length,0);});
-Deno.test("hellohop-webhook: same event id twice -> second answers 200 and one persisted row survives a fresh handler",async()=>{const state=setup();assert.equal((await state.handler(await request())).status,200);const fresh=createWebhookHandler(env,((url,init)=>{state.calls.push({url:String(url),init:init!});const row=JSON.parse(String(init!.body));assert.equal(new URL(String(url)).searchParams.get("on_conflict"),"event_id");assert.match(new Headers(init!.headers).get("Prefer")!,/resolution=ignore-duplicates/);if(!state.stored.has(row.event_id))state.stored.set(row.event_id,row);return Promise.resolve(new Response(null,{status:201}));}) as typeof fetch);assert.equal((await fresh(await request())).status,200);assert.equal(state.stored.size,1);assert.equal(state.calls.length,2);});
-Deno.test("hellohop-webhook: from_me true -> 200, no storage or reply",async()=>{const {handler,calls}=setup();const event=fixture("delivery-message");event.payload.from_me=true;assert.equal((await handler(await request(JSON.stringify(event)))).status,200);assert.equal(calls.length,0);});
-Deno.test("hellohop-webhook: database failure -> 503 so a delivery can retry",async()=>{const {handler}=setup(429);assert.equal((await handler(await request())).status,503);const broken=createWebhookHandler(env,(()=>Promise.reject(new Error("<DATABASE_ERROR>"))) as typeof fetch);assert.equal((await broken(await request())).status,503);});
-Deno.test("hellohop-webhook: unknown event type or unknown message type -> 200",async()=>{for(const field of ["type","payload"]){const {handler,calls}=setup();const event=fixture("delivery-message");if(field==="type")event.type="<FUTURE_EVENT>";else event.payload.type="<FUTURE_TYPE>";assert.equal((await handler(await request(JSON.stringify(event)))).status,200);assert.equal(calls.length,0);}});
-Deno.test("hellohop-webhook: verification happens on the raw bytes before any JSON.parse",async()=>{const source=Deno.readTextFileSync("supabase/functions/hellohop-webhook/index.ts");assert(source.indexOf("await req.arrayBuffer()")>=0);assert(source.indexOf("await verify(")>source.indexOf("await req.arrayBuffer()"));assert(source.indexOf("JSON.parse(")>source.indexOf("await verify("));assert(!source.includes("req.json()"));const {handler}=setup();assert.equal((await handler(await request("{", "0".repeat(64)))).status,401);});
-Deno.test("hellohop-webhook: GET -> 405 with a JSON object body",async()=>{const {handler}=setup();const response=await handler(new Request("https://example.com/webhook"));assert.equal(response.status,405);assert.equal(typeof await response.json(),"object");});
-Deno.test("hellohop-webhook: insert uses on conflict (event_id) do nothing",async()=>{const {handler,calls}=setup();await handler(await request());assert.equal(new URL(calls[0].url).searchParams.get("on_conflict"),"event_id");assert.equal(new Headers(calls[0].init.headers).get("Prefer"),"resolution=ignore-duplicates,return=minimal");assert.match(Deno.readTextFileSync("supabase/functions/hellohop-webhook/index.ts"),/on conflict \(event_id\) do nothing/);});
-Deno.test("hellohop-webhook: missing configuration fails closed; malformed signed events cannot write",async()=>{const {calls}=setup();const handler=createWebhookHandler(()=>undefined,(()=>{throw Error("unexpected call")}) as typeof fetch);assert.equal((await handler(await request())).status,503);const ready=setup();for(const raw of ["{",JSON.stringify({type:"message",payload:{}}),JSON.stringify({...fixture("delivery-message"),payload:{...fixture("delivery-message").payload,timestamp:"<INVALID_DATE>"}})])assert.equal((await ready.handler(await request(raw))).status,400);assert.equal(calls.length,0);assert.equal(ready.calls.length,0);});
-Deno.test("hellohop-webhook: ignores unsigned delivery hints and accepts an old signed timestamp",async()=>{const {handler,stored}=setup();const req=await request();req.headers.set("X-HelloHop-Delivery","<UNSIGNED_HINT>");assert.equal((await handler(req)).status,200);assert(stored.has(fixture("delivery-message").id));assert(!stored.has("<UNSIGNED_HINT>"));});
+const env = (name: string) =>
+  ({
+    HELLOHOP_WEBHOOK_SECRET: secret,
+    SUPABASE_URL: "https://example.supabase.co",
+    SUPABASE_SERVICE_ROLE_KEY: "<SERVICE_ROLE_KEY>",
+  })[name as "HELLOHOP_WEBHOOK_SECRET"];
+const request = async (raw = rawFixture(), signature?: string) =>
+  new Request("https://example.com/webhook", {
+    method: "POST",
+    body: raw,
+    headers: { "X-HelloHop-Signature": signature ?? await sign(raw) },
+  });
+function setup(status = 201) {
+  const calls: { url: string; init: RequestInit }[] = [];
+  const stored = new Map<string, unknown>();
+  const handler = createWebhookHandler(
+    env,
+    ((url, init) => {
+      calls.push({ url: String(url), init: init! });
+      const row = JSON.parse(String(init!.body));
+      if (!stored.has(row.event_id)) stored.set(row.event_id, row);
+      return Promise.resolve(new Response(null, { status }));
+    }) as typeof fetch,
+  );
+  return { calls, stored, handler };
+}
+Deno.test("hellohop-webhook: valid signature -> 200 and the database stores the minimum message once", async () => {
+  const { calls, stored, handler } = setup();
+  assert.equal((await handler(await request())).status, 200);
+  assert.equal(calls.length, 1);
+  assert.equal(stored.size, 1);
+  assert.deepEqual([...stored.values()][0], {
+    event_id: fixture("delivery-message").id,
+    message_id: "3EB0C767D26A1D8E2A41",
+    chat_jid: "66XXXXXXXXX@s.whatsapp.net",
+    sender_jid: "66XXXXXXXXX@s.whatsapp.net",
+    type: "text",
+    text: "<MESSAGE_TEXT>",
+    from_me: false,
+    is_group: false,
+    sent_at: "2026-09-17T03:00:00Z",
+  });
+  assert.equal(new URL(calls[0].url).pathname, "/rest/v1/whatsapp_messages");
+  assert.equal(calls[0].init.method, "POST");
+  const headers = new Headers(calls[0].init.headers);
+  assert.equal(headers.get("Authorization"), "Bearer <SERVICE_ROLE_KEY>");
+  assert.equal(headers.get("apikey"), "<SERVICE_ROLE_KEY>");
+});
+Deno.test("hellohop-webhook: bad signature -> 401 and the database is never called", async () => {
+  const { handler, calls } = setup();
+  assert.equal(
+    (await handler(await request(rawFixture(), "0".repeat(64)))).status,
+    401,
+  );
+  assert.equal(calls.length, 0);
+});
+Deno.test("hellohop-webhook: webhook.test event -> 200 and no message is stored or sent", async () => {
+  const { handler, calls } = setup();
+  assert.equal(
+    (await handler(await request(JSON.stringify(fixture("delivery-test")))))
+      .status,
+    200,
+  );
+  assert.equal(calls.length, 0);
+});
+Deno.test("hellohop-webhook: same event id twice -> second answers 200 and one persisted row survives a fresh handler", async () => {
+  const state = setup();
+  assert.equal((await state.handler(await request())).status, 200);
+  const fresh = createWebhookHandler(
+    env,
+    ((url, init) => {
+      state.calls.push({ url: String(url), init: init! });
+      const row = JSON.parse(String(init!.body));
+      assert.equal(
+        new URL(String(url)).searchParams.get("on_conflict"),
+        "event_id",
+      );
+      assert.match(
+        new Headers(init!.headers).get("Prefer")!,
+        /resolution=ignore-duplicates/,
+      );
+      if (!state.stored.has(row.event_id)) state.stored.set(row.event_id, row);
+      return Promise.resolve(new Response(null, { status: 201 }));
+    }) as typeof fetch,
+  );
+  assert.equal((await fresh(await request())).status, 200);
+  assert.equal(state.stored.size, 1);
+  assert.equal(state.calls.length, 2);
+});
+Deno.test("hellohop-webhook: from_me true -> 200, no storage or reply", async () => {
+  const { handler, calls } = setup();
+  const event = fixture("delivery-message");
+  event.payload.from_me = true;
+  assert.equal(
+    (await handler(await request(JSON.stringify(event)))).status,
+    200,
+  );
+  assert.equal(calls.length, 0);
+});
+Deno.test("hellohop-webhook: database failure -> 503 so a delivery can retry", async () => {
+  const { handler } = setup(429);
+  assert.equal((await handler(await request())).status, 503);
+  const broken = createWebhookHandler(
+    env,
+    (() => Promise.reject(new Error("<DATABASE_ERROR>"))) as typeof fetch,
+  );
+  assert.equal((await broken(await request())).status, 503);
+});
+Deno.test("hellohop-webhook: unknown event type or unknown message type -> 200", async () => {
+  for (const field of ["type", "payload"]) {
+    const { handler, calls } = setup();
+    const event = fixture("delivery-message");
+    if (field === "type") event.type = "<FUTURE_EVENT>";
+    else event.payload.type = "<FUTURE_TYPE>";
+    assert.equal(
+      (await handler(await request(JSON.stringify(event)))).status,
+      200,
+    );
+    assert.equal(calls.length, 0);
+  }
+});
+Deno.test("hellohop-webhook: verification happens on the raw bytes before any JSON.parse", async () => {
+  const source = Deno.readTextFileSync(
+    "supabase/functions/hellohop-webhook/index.ts",
+  );
+  assert(source.indexOf("await req.arrayBuffer()") >= 0);
+  assert(
+    source.indexOf("await verify(") > source.indexOf("await req.arrayBuffer()"),
+  );
+  assert(source.indexOf("JSON.parse(") > source.indexOf("await verify("));
+  assert(!source.includes("req.json()"));
+  const { handler } = setup();
+  assert.equal((await handler(await request("{", "0".repeat(64)))).status, 401);
+});
+Deno.test("hellohop-webhook: GET -> 405 with a JSON object body", async () => {
+  const { handler } = setup();
+  const response = await handler(new Request("https://example.com/webhook"));
+  assert.equal(response.status, 405);
+  assert.equal(typeof await response.json(), "object");
+});
+Deno.test("hellohop-webhook: insert uses on conflict (event_id) do nothing", async () => {
+  const { handler, calls } = setup();
+  await handler(await request());
+  assert.equal(
+    new URL(calls[0].url).searchParams.get("on_conflict"),
+    "event_id",
+  );
+  assert.equal(
+    new Headers(calls[0].init.headers).get("Prefer"),
+    "resolution=ignore-duplicates,return=minimal",
+  );
+  assert.match(
+    Deno.readTextFileSync("supabase/functions/hellohop-webhook/index.ts"),
+    /on conflict \(event_id\) do nothing/,
+  );
+});
+Deno.test("hellohop-webhook: missing configuration fails closed; malformed signed events cannot write", async () => {
+  const { calls } = setup();
+  const handler = createWebhookHandler(
+    () => undefined,
+    (() => {
+      throw Error("unexpected call");
+    }) as typeof fetch,
+  );
+  assert.equal((await handler(await request())).status, 503);
+  const ready = setup();
+  for (
+    const raw of [
+      "{",
+      JSON.stringify({ type: "message", payload: {} }),
+      JSON.stringify({
+        ...fixture("delivery-message"),
+        payload: {
+          ...fixture("delivery-message").payload,
+          timestamp: "<INVALID_DATE>",
+        },
+      }),
+    ]
+  ) assert.equal((await ready.handler(await request(raw))).status, 400);
+  assert.equal(calls.length, 0);
+  assert.equal(ready.calls.length, 0);
+});
+Deno.test("hellohop-webhook: ignores unsigned delivery hints and accepts an old signed timestamp", async () => {
+  const { handler, stored } = setup();
+  const req = await request();
+  req.headers.set("X-HelloHop-Delivery", "<UNSIGNED_HINT>");
+  assert.equal((await handler(req)).status, 200);
+  assert(stored.has(fixture("delivery-message").id));
+  assert(!stored.has("<UNSIGNED_HINT>"));
+});

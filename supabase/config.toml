@@ -1,0 +1,9 @@
+project_id = "hellohop-supabase-whatsapp"
+
+# HelloHop authenticates deliveries with its body signature.
+[functions.hellohop-webhook]
+verify_jwt = false
+
+# This function itself checks the exact service-role bearer credential.
+[functions.hellohop-send]
+verify_jwt = false
