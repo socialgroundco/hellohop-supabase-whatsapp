@@ -168,10 +168,13 @@ linked by QR. Free means no card.
 ```sh
 deno task test
 deno task typecheck
+deno task build
 deno task lint
 deno task fmt:check
 deno task proof
 ```
+
+The build task checks the production TypeScript modules without producing a bundle.
 
 The test task denies network access and remote imports, has no dependency
 download, runs sequentially, and mocks only the external HTTP boundary. Tests
@@ -215,5 +218,4 @@ The code is MIT. 'HelloHop' is the name of the HelloHop service and is not
 licensed by this repository; you may say your app uses HelloHop, you may not
 present your app as HelloHop.
 
-HelloHop is an independent service, not affiliated with or endorsed by Meta or
-WhatsApp.
+HelloHop is an independent service, not affiliated with or endorsed by Meta or WhatsApp.

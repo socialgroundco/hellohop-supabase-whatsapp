@@ -17,7 +17,8 @@
     "typecheck": "deno check --no-remote --no-npm supabase/functions/*/index.ts tests/*.test.ts scripts/*.ts",
     "lint": "deno lint",
     "fmt:check": "deno fmt --check",
-    "proof": "deno run --cached-only --deny-net --allow-read --allow-write --allow-run=deno,git scripts/prove-injections.ts"
+    "proof": "deno run --cached-only --no-remote --no-npm --deny-net --allow-read --allow-write --allow-run=deno,git scripts/prove-injections.ts",
+    "build": "deno check --no-remote --no-npm supabase/functions/*/index.ts"
   },
   "fmt": {
     "exclude": [

@@ -39,6 +39,19 @@ grant execute on function public.delete_messages_older_than(int) to service_role
 -- Extension absence is expected on some local Postgres installations.
 do $cron$
 begin
+  if not exists (select 1 from pg_extension where extname = 'pg_cron') then
+    if not exists (select 1 from pg_available_extensions where name = 'pg_cron')
+      or not exists (
+        select 1
+        from regexp_split_to_table(
+          coalesce(current_setting('shared_preload_libraries', true), ''), ','
+        ) as libraries(name)
+        where replace(replace(btrim(name), '"', ''), '$libdir/', '') = 'pg_cron'
+      ) then
+      raise notice 'pg_cron unavailable or not preloaded; run retention daily with your scheduler';
+      return;
+    end if;
+  end if;
   begin
     create extension if not exists pg_cron;
   exception when feature_not_supported or undefined_file or insufficient_privilege then

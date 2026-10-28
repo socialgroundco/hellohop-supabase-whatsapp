@@ -1,0 +1,413 @@
+[
+  {
+    "testFile": "tests/verify.test.ts",
+    "name": "verify: accepts the docs fixture",
+    "path": "supabase/functions/_shared/verify.ts",
+    "find": "): Promise<boolean> {",
+    "replace": "): Promise<boolean> {\n  if (rawBody.byteLength >= 0) return false;"
+  },
+  {
+    "testFile": "tests/verify.test.ts",
+    "name": "verify: rejects a body changed by one byte",
+    "path": "supabase/functions/_shared/verify.ts",
+    "find": "): Promise<boolean> {",
+    "replace": "): Promise<boolean> {\n  if (rawBody.byteLength >= 0) return true;"
+  },
+  {
+    "testFile": "tests/verify.test.ts",
+    "name": "verify: rejects a signature changed by one hex character",
+    "path": "supabase/functions/_shared/verify.ts",
+    "find": "): Promise<boolean> {",
+    "replace": "): Promise<boolean> {\n  if (rawBody.byteLength >= 0) return true;"
+  },
+  {
+    "testFile": "tests/verify.test.ts",
+    "name": "verify: rejects an empty secret even when the signature matches HMAC of empty key",
+    "path": "supabase/functions/_shared/verify.ts",
+    "find": "): Promise<boolean> {",
+    "replace": "): Promise<boolean> {\n  if (rawBody.byteLength >= 0) return true;"
+  },
+  {
+    "testFile": "tests/verify.test.ts",
+    "name": "verify: rejects an empty or missing header",
+    "path": "supabase/functions/_shared/verify.ts",
+    "find": "): Promise<boolean> {",
+    "replace": "): Promise<boolean> {\n  if (rawBody.byteLength >= 0) return true;"
+  },
+  {
+    "testFile": "tests/verify.test.ts",
+    "name": "verify: rejects uppercase hex of the correct value",
+    "path": "supabase/functions/_shared/verify.ts",
+    "find": "): Promise<boolean> {",
+    "replace": "): Promise<boolean> {\n  if (rawBody.byteLength >= 0) return true;"
+  },
+  {
+    "testFile": "tests/verify.test.ts",
+    "name": "verify: does not depend on JSON key order",
+    "path": "supabase/functions/_shared/verify.ts",
+    "find": "): Promise<boolean> {",
+    "replace": "): Promise<boolean> {\n  if (rawBody.byteLength >= 0) return true;"
+  },
+  {
+    "testFile": "tests/verify-identity.test.ts",
+    "name": "verify-identity: lib/hellohop/verify.ts sha256 equals fixtures/verify.sha256",
+    "path": "supabase/functions/_shared/verify.ts",
+    "find": "",
+    "replace": "\n// deliberate identity mutation\n",
+    "kind": "append"
+  },
+  {
+    "testFile": "tests/brand.test.ts",
+    "name": "brand: no banned legacy name anywhere in the tree; positive control flags each banned term",
+    "path": "injected-brand.txt",
+    "find": "",
+    "replace": "",
+    "kind": "brand"
+  },
+  {
+    "testFile": "tests/secrets.test.ts",
+    "name": "secrets: tree and git history contain no live token shape; positive control flags a synthetic one; .env.example values are all placeholders; .gitignore lists .env, .env.local, .env.*.local",
+    "path": "injected-credential.txt",
+    "find": "",
+    "replace": "",
+    "kind": "credential"
+  },
+  {
+    "testFile": "tests/secrets.test.ts",
+    "name": "secrets: tree and git history contain no live token shape; positive control flags a synthetic one; .env.example values are all placeholders; .gitignore lists .env, .env.local, .env.*.local",
+    "path": ".env.example",
+    "find": "HELLOHOP_TOKEN=<43 characters from the console>",
+    "replace": "HELLOHOP_TOKEN=synthetic"
+  },
+  {
+    "testFile": "tests/secrets.test.ts",
+    "name": "secrets: tree and git history contain no live token shape; positive control flags a synthetic one; .env.example values are all placeholders; .gitignore lists .env, .env.local, .env.*.local",
+    "path": ".gitignore",
+    "find": ".env.local\n",
+    "replace": ""
+  },
+  {
+    "testFile": "tests/contract.test.ts",
+    "name": "contract: fixtures/delivery-message.json validates against the vendored OpenAPI webhook envelope schema; the send body we build validates against the send-text request schema",
+    "path": "supabase/functions/_shared/client.ts",
+    "find": "return { to, text };",
+    "replace": "return { to, text, extra: true };"
+  },
+  {
+    "testFile": "tests/contract.test.ts",
+    "name": "contract: fixtures/delivery-message.json validates against the vendored OpenAPI webhook envelope schema; the send body we build validates against the send-text request schema",
+    "path": "fixtures/delivery-message.json",
+    "find": "  \"id\": \"evt_a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1\",\n",
+    "replace": ""
+  },
+  {
+    "testFile": "tests/contract.test.ts",
+    "name": "contract: fixtures/SOURCE names a sha and a date",
+    "path": "fixtures/SOURCE",
+    "find": "",
+    "replace": "",
+    "kind": "source-date"
+  },
+  {
+    "testFile": "tests/contract.test.ts",
+    "name": "contract: fixtures/SOURCE names a sha and a date",
+    "path": "fixtures/SOURCE",
+    "find": "",
+    "replace": "",
+    "kind": "source-sha"
+  },
+  {
+    "testFile": "tests/migration.test.ts",
+    "name": "migration: SQL contains UNIQUE (event_id), ENABLE ROW LEVEL SECURITY, the retention function, and the guarded pg_cron block; no policy grants select to anon",
+    "path": "supabase/migrations/0001_whatsapp_messages.sql",
+    "find": "ENABLE ROW LEVEL SECURITY",
+    "replace": "DISABLE ROW LEVEL SECURITY"
+  },
+  {
+    "testFile": "tests/migration.test.ts",
+    "name": "migration: SQL contains UNIQUE (event_id), ENABLE ROW LEVEL SECURITY, the retention function, and the guarded pg_cron block; no policy grants select to anon",
+    "path": "supabase/migrations/0001_whatsapp_messages.sql",
+    "find": "UNIQUE (event_id)",
+    "replace": "UNIQUE (message_id)"
+  },
+  {
+    "testFile": "tests/migration.test.ts",
+    "name": "migration: SQL contains UNIQUE (event_id), ENABLE ROW LEVEL SECURITY, the retention function, and the guarded pg_cron block; no policy grants select to anon",
+    "path": "supabase/migrations/0001_whatsapp_messages.sql",
+    "find": "create extension if not exists pg_cron",
+    "replace": "perform 1"
+  },
+  {
+    "testFile": "tests/migration.test.ts",
+    "name": "migration: SQL contains UNIQUE (event_id), ENABLE ROW LEVEL SECURITY, the retention function, and the guarded pg_cron block; no policy grants select to anon",
+    "path": "supabase/migrations/0001_whatsapp_messages.sql",
+    "find": "exception when feature_not_supported or undefined_file or insufficient_privilege",
+    "replace": "exception when division_by_zero"
+  },
+  {
+    "testFile": "tests/migration.test.ts",
+    "name": "migration: SQL contains UNIQUE (event_id), ENABLE ROW LEVEL SECURITY, the retention function, and the guarded pg_cron block; no policy grants select to anon",
+    "path": "supabase/migrations/0001_whatsapp_messages.sql",
+    "find": "delete_messages_older_than(30)",
+    "replace": "delete_messages_older_than(3)"
+  },
+  {
+    "testFile": "tests/migration.test.ts",
+    "name": "migration: column list equals the documented minimum and excludes push_name and raw payload",
+    "path": "supabase/migrations/0001_whatsapp_messages.sql",
+    "find": "  type text not null,",
+    "replace": "  type text not null,\n  extra text,"
+  },
+  {
+    "testFile": "tests/migration.test.ts",
+    "name": "migration: retention uses received_at and rejects nonpositive days; only service role may execute",
+    "path": "supabase/migrations/0001_whatsapp_messages.sql",
+    "find": "days < 1",
+    "replace": "days < 0"
+  },
+  {
+    "testFile": "tests/migration.test.ts",
+    "name": "migration: retention uses received_at and rejects nonpositive days; only service role may execute",
+    "path": "supabase/migrations/0001_whatsapp_messages.sql",
+    "find": "where received_at < now()",
+    "replace": "where sent_at < now()"
+  },
+  {
+    "testFile": "tests/migration.test.ts",
+    "name": "migration: retention uses received_at and rejects nonpositive days; only service role may execute",
+    "path": "supabase/migrations/0001_whatsapp_messages.sql",
+    "find": "from public, anon, authenticated",
+    "replace": "from anon, authenticated"
+  },
+  {
+    "testFile": "tests/webhook.test.ts",
+    "name": "hellohop-webhook: valid signature -> 200 and the database stores the minimum message once",
+    "path": "supabase/functions/hellohop-webhook/index.ts",
+    "find": "message_id: message.id,",
+    "replace": "message_id: \"<WRONG_ID>\","
+  },
+  {
+    "testFile": "tests/webhook.test.ts",
+    "name": "hellohop-webhook: bad signature -> 401 and the database is never called",
+    "path": "supabase/functions/hellohop-webhook/index.ts",
+    "find": "{ status: 401 }",
+    "replace": "{ status: 200 }"
+  },
+  {
+    "testFile": "tests/webhook.test.ts",
+    "name": "hellohop-webhook: webhook.test event -> 200 and no message is stored or sent",
+    "path": "supabase/functions/hellohop-webhook/index.ts",
+    "find": "if (event.type !== \"message\") return Response.json({});",
+    "replace": "if (event.type !== \"message\") return Response.json({}, {status:400});"
+  },
+  {
+    "testFile": "tests/webhook.test.ts",
+    "name": "hellohop-webhook: same event id twice -> second answers 200 and one persisted row survives a fresh handler",
+    "path": "supabase/functions/hellohop-webhook/index.ts",
+    "find": "url.searchParams.set(\"on_conflict\", \"event_id\");",
+    "replace": "url.searchParams.set(\"on_conflict\", \"message_id\");"
+  },
+  {
+    "testFile": "tests/webhook.test.ts",
+    "name": "hellohop-webhook: from_me true -> 200, no storage or reply",
+    "path": "supabase/functions/hellohop-webhook/index.ts",
+    "find": "message.from_me === true || message.type !== \"text\"",
+    "replace": "message.type !== \"text\""
+  },
+  {
+    "testFile": "tests/webhook.test.ts",
+    "name": "hellohop-webhook: database failure -> 503 so a delivery can retry",
+    "path": "supabase/functions/hellohop-webhook/index.ts",
+    "find": "if (!result.ok) return Response.json({}, { status: 503 });",
+    "replace": "if (!result.ok) return Response.json({});"
+  },
+  {
+    "testFile": "tests/webhook.test.ts",
+    "name": "hellohop-webhook: unknown event type or unknown message type -> 200",
+    "path": "supabase/functions/hellohop-webhook/index.ts",
+    "find": "if (event.type !== \"message\") return Response.json({});",
+    "replace": "if (event.type !== \"message\") return Response.json({}, {status:400});"
+  },
+  {
+    "testFile": "tests/webhook.test.ts",
+    "name": "hellohop-webhook: unknown event type or unknown message type -> 200",
+    "path": "supabase/functions/hellohop-webhook/index.ts",
+    "find": "if (message.from_me === true || message.type !== \"text\") {",
+    "replace": "if (message.type !== \"text\") return Response.json({}, {status:400});\n    if (message.from_me === true) {"
+  },
+  {
+    "testFile": "tests/webhook.test.ts",
+    "name": "hellohop-webhook: verification happens on the raw bytes before any JSON.parse",
+    "path": "supabase/functions/hellohop-webhook/index.ts",
+    "find": "    const raw = new Uint8Array(await req.arrayBuffer());",
+    "replace": "    JSON.parse(\"{}\");\n    const raw = new Uint8Array(await req.arrayBuffer());"
+  },
+  {
+    "testFile": "tests/webhook.test.ts",
+    "name": "hellohop-webhook: GET -> 405 with a JSON object body",
+    "path": "supabase/functions/hellohop-webhook/index.ts",
+    "find": "{ status: 405 }",
+    "replace": "{ status: 200 }"
+  },
+  {
+    "testFile": "tests/webhook.test.ts",
+    "name": "hellohop-webhook: insert uses on conflict (event_id) do nothing",
+    "path": "supabase/functions/hellohop-webhook/index.ts",
+    "find": "resolution=ignore-duplicates,return=minimal",
+    "replace": "resolution=merge-duplicates,return=minimal"
+  },
+  {
+    "testFile": "tests/webhook.test.ts",
+    "name": "hellohop-webhook: missing configuration fails closed; malformed signed events cannot write",
+    "path": "supabase/functions/hellohop-webhook/index.ts",
+    "find": "if (!secret || !database || !serviceKey) {\n      return Response.json({}, { status: 503 });",
+    "replace": "if (!secret || !database || !serviceKey) {\n      return Response.json({}, { status: 200 });"
+  },
+  {
+    "testFile": "tests/webhook.test.ts",
+    "name": "hellohop-webhook: ignores unsigned delivery hints and accepts an old signed timestamp",
+    "path": "supabase/functions/hellohop-webhook/index.ts",
+    "find": "event_id: event.id,",
+    "replace": "event_id: req.headers.get(\"X-HelloHop-Delivery\") ?? event.id,"
+  },
+  {
+    "testFile": "tests/send.test.ts",
+    "name": "hellohop-send: refuses a request without the service-role authorization",
+    "path": "supabase/functions/hellohop-send/index.ts",
+    "find": "req.headers.get(\"Authorization\") !== `Bearer ${serviceKey}`",
+    "replace": "false"
+  },
+  {
+    "testFile": "tests/send.test.ts",
+    "name": "sendText builds POST <origin>/v1/sessions/<id>/messages/text with Authorization: Bearer and body {to, text} only",
+    "path": "supabase/functions/_shared/client.ts",
+    "find": "method: \"POST\"",
+    "replace": "method: \"GET\""
+  },
+  {
+    "testFile": "tests/send.test.ts",
+    "name": "sendText builds POST <origin>/v1/sessions/<id>/messages/text with Authorization: Bearer and body {to, text} only",
+    "path": "supabase/functions/_shared/client.ts",
+    "find": "Authorization: `Bearer ${token}`",
+    "replace": "Authorization: \"<MISSING>\""
+  },
+  {
+    "testFile": "tests/send.test.ts",
+    "name": "sendText builds POST <origin>/v1/sessions/<id>/messages/text with Authorization: Bearer and body {to, text} only",
+    "path": "supabase/functions/_shared/client.ts",
+    "find": "/messages/text`",
+    "replace": "/messages/placeholder`"
+  },
+  {
+    "testFile": "tests/send.test.ts",
+    "name": "sendText builds POST <origin>/v1/sessions/<id>/messages/text with Authorization: Bearer and body {to, text} only",
+    "path": "supabase/functions/_shared/client.ts",
+    "find": "return { to, text };",
+    "replace": "return { to, text, extra: true };"
+  },
+  {
+    "testFile": "tests/send.test.ts",
+    "name": "sendText returns {id, status: \"server_ack\"} from the fixture response",
+    "path": "supabase/functions/hellohop-send/index.ts",
+    "find": "{ id: result.id, status: result.status }",
+    "replace": "{ id: \"<WRONG_ID>\", status: result.status }"
+  },
+  {
+    "testFile": "tests/send.test.ts",
+    "name": "sendText maps the 429 fixture to {code, window, resets_at, retry_after} and throws nothing it cannot name",
+    "path": "supabase/functions/_shared/client.ts",
+    "find": "result.resets_at = data.resets_at",
+    "replace": "result.resets_at = undefined"
+  },
+  {
+    "testFile": "tests/send.test.ts",
+    "name": "sendText maps the 401 fixture to code unauthorized",
+    "path": "supabase/functions/_shared/client.ts",
+    "find": "if (data.code === \"unauthorized\") {\n      return { ok: false, code: \"unauthorized\" };",
+    "replace": "if (data.code === \"unauthorized\") {\n      return { ok: false, code: \"api_error\" };"
+  },
+  {
+    "testFile": "tests/send.test.ts",
+    "name": "sendText never logs or includes the token in an error",
+    "path": "supabase/functions/_shared/client.ts",
+    "find": "code: \"transport_error\"",
+    "replace": "code: token"
+  },
+  {
+    "testFile": "tests/send.test.ts",
+    "name": "hellohop-send: invalid JSON, wrong method or unexpected fields cannot send",
+    "path": "supabase/functions/hellohop-send/index.ts",
+    "find": "{ status: 405 }",
+    "replace": "{ status: 200 }"
+  },
+  {
+    "testFile": "tests/send.test.ts",
+    "name": "hellohop-send: invalid JSON, wrong method or unexpected fields cannot send",
+    "path": "supabase/functions/hellohop-send/index.ts",
+    "find": "Object.keys(body).some((key) => key !== \"to\" && key !== \"text\")",
+    "replace": "false"
+  },
+  {
+    "testFile": "tests/send.test.ts",
+    "name": "sendText: missing token or unsafe origin fails before fetch",
+    "path": "supabase/functions/_shared/client.ts",
+    "find": "if (!token || !channel || !/^[A-Za-z0-9_-]+$/.test(channel)) {\n    return { ok: false, code: \"configuration_error\" };",
+    "replace": "if (!token || !channel || !/^[A-Za-z0-9_-]+$/.test(channel)) {\n    return { ok: false, code: \"api_error\" };"
+  },
+  {
+    "testFile": "tests/send.test.ts",
+    "name": "sendText: missing token or unsafe origin fails before fetch",
+    "path": "supabase/functions/_shared/client.ts",
+    "find": "origin.protocol !== \"https:\"",
+    "replace": "origin.protocol !== \"https:\" && origin.protocol !== \"http:\""
+  },
+  {
+    "testFile": "tests/drift.test.ts",
+    "name": "drift: identical source hash produces no issue; changed source reports only escaped paths",
+    "path": "scripts/openapi-diff.ts",
+    "find": "if (hash === source.openapi_source_sha256) return \"\";",
+    "replace": "if (hash !== source.openapi_source_sha256) return \"\";"
+  },
+  {
+    "testFile": "tests/drift.test.ts",
+    "name": "drift: identical source hash produces no issue; changed source reports only escaped paths",
+    "path": "scripts/openapi-diff.ts",
+    "find": "return [path || \"/\"];",
+    "replace": "return [\"<WRONG_PATH>\"];"
+  },
+  {
+    "testFile": "tests/drift.test.ts",
+    "name": "drift: a source-only byte change still opens a signal without leaking examples",
+    "path": "scripts/openapi-diff.ts",
+    "find": "Source bytes changed; no redacted JSON value changed.",
+    "replace": "<SOURCE_CHANGE>"
+  },
+  {
+    "testFile": "tests/migration.test.ts",
+    "name": "migration: unavailable or unloaded pg_cron skips extension creation before scheduling",
+    "path": "supabase/migrations/0001_whatsapp_messages.sql",
+    "find": "pg_available_extensions",
+    "replace": "pg_available_extension_missing"
+  },
+  {
+    "testFile": "tests/migration.test.ts",
+    "name": "migration: unavailable or unloaded pg_cron skips extension creation before scheduling",
+    "path": "supabase/migrations/0001_whatsapp_messages.sql",
+    "find": "shared_preload_libraries",
+    "replace": "missing_preload_setting"
+  },
+  {
+    "testFile": "tests/config.test.ts",
+    "name": "config: one main-push CI and one monthly drift workflow use immutable actions and pinned Deno",
+    "path": ".github/workflows/ci.yml",
+    "find": "branches: [main]",
+    "replace": "branches: [other]"
+  },
+  {
+    "testFile": "tests/config.test.ts",
+    "name": "config: one main-push CI and one monthly drift workflow use immutable actions and pinned Deno",
+    "path": ".github/workflows/ci.yml",
+    "find": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "replace": "actions/checkout@v4"
+  }
+]

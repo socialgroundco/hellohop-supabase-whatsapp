@@ -61,3 +61,21 @@ Deno.test("migration: retention uses received_at and rejects nonpositive days; o
     /revoke all on table public.whatsapp_messages from anon, authenticated/i,
   );
 });
+
+Deno.test("migration: unavailable or unloaded pg_cron skips extension creation before scheduling", () => {
+  const source = sql();
+  const extension = source.indexOf("create extension if not exists pg_cron");
+  assert.match(source, /pg_available_extensions/);
+  assert.match(source, /shared_preload_libraries/);
+  assert.match(source, /pg_extension/);
+  assert(source.indexOf("pg_available_extensions") < extension);
+  assert(source.indexOf("shared_preload_libraries") < extension);
+  assert.match(
+    source,
+    /if not exists \(select 1 from pg_extension where extname = 'pg_cron'\)/i,
+  );
+  assert.match(
+    source,
+    /raise notice 'pg_cron unavailable or not preloaded; run retention daily with your scheduler';\s*return;/i,
+  );
+});
