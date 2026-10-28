@@ -1,0 +1,41 @@
+{
+  "console_repo_sha": "9b8b1334fb541d5526d3301a1de85457fd29db58",
+  "console_sha_note": "Read-only local checkout; live server deployment SHA is not exposed.",
+  "fetched_at": "2026-10-28T07:20:06.679429+00:00",
+  "openapi_url": "https://hellohop.app/docs/openapi.json",
+  "openapi_source_sha256": "b1d0708a98c7a5c65c873b502963112c9b98543fb51c3bb66e07f9b38167d237",
+  "openapi_vendored_sha256": "6fb255857819a6fb4794eadf837390d2671aacaaaedd33ebc91193bcd6430406",
+  "transform": "JSON formatting and literal phone/JID placeholder substitution only; structural schemas preserved. Raw source retained outside repo in item3-evidence/repo2-sources/openapi.json.",
+  "docs": {
+    "authentication.md": {
+      "url": "https://hellohop.app/docs/authentication.md",
+      "sha256": "326ddd2292574195fad36654c331768793ea1784cd19c19b65dab30ed4f5698c"
+    },
+    "webhook-events.md": {
+      "url": "https://hellohop.app/docs/webhook-events.md",
+      "sha256": "5494ae12d06e75365c11bd5b53eaf4480e900fa0c93ef5d7b1dd734fa133c97c"
+    },
+    "mcp.md": {
+      "url": "https://hellohop.app/docs/mcp.md",
+      "sha256": "dd53bac9f04b71972d5d1b062a8f24111a88ec316caaa06913b2adc1f4703d44"
+    },
+    "quickstart.md": {
+      "url": "https://hellohop.app/docs/quickstart.md",
+      "sha256": "b338e794061e2c0c991b8220685601efd944a0ccf7aa8c918f7f894651bc905d"
+    },
+    "webhooks.md": {
+      "url": "https://hellohop.app/docs/webhooks.md",
+      "sha256": "afbbea40e9c268707a28db088651de21c136196b82260ea5a87c034c5a435392"
+    },
+    "limits.md": {
+      "url": "https://hellohop.app/docs/limits.md",
+      "sha256": "3e553e50f76582f619057e3688c1ee025e3cfdbc150816c66a4eb58c82980adf"
+    },
+    "plugins.md": {
+      "url": "https://hellohop.app/docs/plugins.md",
+      "sha256": "078099801c92da5181a6e1e987628942c50bb1c98c9c9083f9b99bb233c7b1b3"
+    }
+  },
+  "envelope_schema_note": "Live OpenAPI has no webhook envelope schema. webhook-envelope.schema.json is explicitly derived from webhook-events.md common envelope, not a claimed OpenAPI schema.",
+  "fixture_note": "Docs examples with synthetic event IDs, channel/message/address placeholders and no display name."
+}

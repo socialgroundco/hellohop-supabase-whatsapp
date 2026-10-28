@@ -1,0 +1,10 @@
+{
+  "code": "sandbox_allowance_exceeded",
+  "error": "...",
+  "window": "sandbox_messages_daily",
+  "cap": 180,
+  "used": 180,
+  "reserved": 0,
+  "resets_at": "2026-09-30T00:00:00+07:00",
+  "retry_after": 3600
+}

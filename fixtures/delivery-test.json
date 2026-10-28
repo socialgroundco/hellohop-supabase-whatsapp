@@ -1,0 +1,9 @@
+{
+  "id": "test-evt_b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2",
+  "type": "webhook.test",
+  "session": "<CHANNEL_ID>",
+  "timestamp": "2026-09-17T03:00:00Z",
+  "payload": {
+    "note": "<DELIVERY_TEST_NOTE>"
+  }
+}

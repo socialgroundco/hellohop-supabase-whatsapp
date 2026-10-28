@@ -1,0 +1,38 @@
+{
+  "lock": {
+    "path": "deno.lock",
+    "frozen": true
+  },
+  "compilerOptions": {
+    "strict": true,
+    "lib": [
+      "deno.ns",
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ]
+  },
+  "tasks": {
+    "test": "deno test --cached-only --deny-net --allow-read=. --allow-write=/tmp --allow-run=git tests",
+    "typecheck": "deno check --cached-only supabase/functions/*/index.ts tests/*.test.ts scripts/*.ts",
+    "lint": "deno lint",
+    "fmt:check": "deno fmt --check",
+    "proof": "deno run --cached-only --deny-net --allow-read --allow-write --allow-run=deno,git scripts/prove-injections.ts"
+  },
+  "fmt": {
+    "exclude": [
+      "supabase/functions/_shared/verify.ts",
+      "fixtures/"
+    ]
+  },
+  "lint": {
+    "exclude": [
+      "supabase/functions/_shared/verify.ts"
+    ]
+  },
+  "test": {
+    "include": [
+      "tests/*.test.ts"
+    ]
+  }
+}
