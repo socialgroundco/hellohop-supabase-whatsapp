@@ -409,5 +409,33 @@
     "path": ".github/workflows/ci.yml",
     "find": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
     "replace": "actions/checkout@v4"
+  },
+  {
+    "testFile": "tests/secrets.test.ts",
+    "name": "secrets: tree and git history contain no live token shape; positive control flags a synthetic one; .env.example values are all placeholders; .gitignore lists .env, .env.local, .env.*.local",
+    "path": "tests/scan.ts",
+    "find": "findings.push(\"account credential\");",
+    "replace": "void findings;"
+  },
+  {
+    "testFile": "tests/secrets.test.ts",
+    "name": "secrets: tree and git history contain no live token shape; positive control flags a synthetic one; .env.example values are all placeholders; .gitignore lists .env, .env.local, .env.*.local",
+    "path": "tests/scan.ts",
+    "find": "findings.push(\"bearer credential\");",
+    "replace": "void findings;"
+  },
+  {
+    "testFile": "tests/secrets.test.ts",
+    "name": "secrets: tree and git history contain no live token shape; positive control flags a synthetic one; .env.example values are all placeholders; .gitignore lists .env, .env.local, .env.*.local",
+    "path": "tests/scan.ts",
+    "find": "findings.push(\"phone shape\");",
+    "replace": "void findings;"
+  },
+  {
+    "testFile": "tests/secrets.test.ts",
+    "name": "secrets: tree and git history contain no live token shape; positive control flags a synthetic one; .env.example values are all placeholders; .gitignore lists .env, .env.local, .env.*.local",
+    "path": "tests/scan.ts",
+    "find": "findings.push(\"address shape\");",
+    "replace": "void findings;"
   }
 ]
