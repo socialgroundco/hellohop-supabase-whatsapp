@@ -437,5 +437,47 @@
     "path": "tests/scan.ts",
     "find": "findings.push(\"address shape\");",
     "replace": "void findings;"
+  },
+  {
+    "testFile": "tests/verify.test.ts",
+    "name": "verify: rejects non-hex header characters",
+    "path": "supabase/functions/_shared/verify.ts",
+    "find": "): Promise<boolean> {",
+    "replace": "): Promise<boolean> {\n  if (signatureHeader && /^[0-9a-f]{63}g$/.test(signatureHeader)) return true;"
+  },
+  {
+    "testFile": "tests/verify.test.ts",
+    "name": "verify: rejects a prefixed signature",
+    "path": "supabase/functions/_shared/verify.ts",
+    "find": "): Promise<boolean> {",
+    "replace": "): Promise<boolean> {\n  signatureHeader = signatureHeader?.replace(/^sha256=/, \"\");"
+  },
+  {
+    "testFile": "tests/verify.test.ts",
+    "name": "verify: rejects wrong-length hex headers",
+    "path": "supabase/functions/_shared/verify.ts",
+    "find": "): Promise<boolean> {",
+    "replace": "): Promise<boolean> {\n  if (signatureHeader?.length === 63) return true;"
+  },
+  {
+    "testFile": "tests/verify.test.ts",
+    "name": "verify: rejects wrong-length hex headers",
+    "path": "supabase/functions/_shared/verify.ts",
+    "find": "): Promise<boolean> {",
+    "replace": "): Promise<boolean> {\n  if (signatureHeader?.length === 65) return true;"
+  },
+  {
+    "testFile": "tests/verify.test.ts",
+    "name": "verify: rejects duplicate signature headers",
+    "path": "supabase/functions/_shared/verify.ts",
+    "find": "): Promise<boolean> {",
+    "replace": "): Promise<boolean> {\n  signatureHeader = signatureHeader?.split(\", \").at(0);"
+  },
+  {
+    "testFile": "tests/verify.test.ts",
+    "name": "verify: rejects duplicate signature headers",
+    "path": "supabase/functions/_shared/verify.ts",
+    "find": "): Promise<boolean> {",
+    "replace": "): Promise<boolean> {\n  signatureHeader = signatureHeader?.split(\", \").at(-1);"
   }
 ]

@@ -43,3 +43,44 @@ Deno.test("verify: does not depend on JSON key order", async () => {
   assert.notEqual(reordered, raw);
   assert.equal(await verify(secret, bytes(reordered), await sign(raw)), false);
 });
+Deno.test("verify: rejects non-hex header characters", async () => {
+  const signature = await sign(raw);
+  const changed = signature.slice(0, -1) + "g";
+  assert.notEqual(changed, signature);
+  assert.equal(changed.length, 64);
+  assert.match(changed, /^[0-9a-f]{63}g$/);
+  assert.equal(await verify(secret, bytes(raw), changed), false);
+});
+Deno.test("verify: rejects a prefixed signature", async () => {
+  const signature = await sign(raw);
+  const changed = "sha256=" + signature;
+  assert.notEqual(changed, signature);
+  assert.equal(changed.slice(7), signature);
+  assert.equal(await verify(secret, bytes(raw), changed), false);
+});
+Deno.test("verify: rejects wrong-length hex headers", async () => {
+  const signature = await sign(raw);
+  for (const changed of [signature.slice(0, -1), signature + "0"]) {
+    assert.notEqual(changed.length, 64);
+    assert.match(changed, /^[0-9a-f]+$/);
+    assert.equal(await verify(secret, bytes(raw), changed), false);
+  }
+});
+Deno.test("verify: rejects duplicate signature headers", async () => {
+  const signature = await sign(raw);
+  const changed = (signature[0] === "a" ? "b" : "a") + signature.slice(1);
+  assert.notEqual(changed, signature);
+  for (
+    const pair of [[signature, signature], [signature, changed], [
+      changed,
+      signature,
+    ]]
+  ) {
+    const headers = new Headers();
+    for (const value of pair) headers.append("X-HelloHop-Signature", value);
+    const combined = headers.get("X-HelloHop-Signature");
+    assert.equal(combined, pair.join(", "));
+    assert.notEqual(combined, signature);
+    assert.equal(await verify(secret, bytes(raw), combined), false);
+  }
+});
