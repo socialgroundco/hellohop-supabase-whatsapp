@@ -36,5 +36,9 @@
     "include": [
       "tests/*.test.ts"
     ]
-  }
+  },
+  "name": "hellohop-supabase-whatsapp",
+  "license": "MIT",
+  "repository": "github:socialgroundco/hellohop-supabase-whatsapp",
+  "description": "Supabase Edge Functions on HelloHop's API: signed WhatsApp messages into a table, text sending from a backend."
 }

@@ -145,23 +145,9 @@ protection here is the persisted dedupe of the `id` inside the body after
 signature verification. Delivery headers do not choose the dedupe ID. See
 [signatures and retries](https://hellohop.app/docs/webhooks.md).
 
-## Free sandbox limits
+## Sandbox limits
 
-The [documented sandbox allowances](https://hellohop.app/docs/limits.md) reset
-in Bangkok time (UTC+7):
-
-| Allowance     | Limit         | Resets             |
-| ------------- | ------------- | ------------------ |
-| Messages sent | 180 a day     | midnight           |
-| New chats     | 10 a month    | first of the month |
-| Group adds    | 5 a day       | midnight           |
-| API calls     | 1,500 a month | first of the month |
-
-The first message to a new person is one of the 10 new chats that month. Every
-request with the sandbox token counts as an API call, reads included; requests
-HelloHop refuses before they run, requests the console makes for you, received
-messages and delivered webhooks do not count. The sandbox needs a real number
-linked by QR. Free means no card.
+See the [live limits documentation](https://hellohop.app/docs/limits.md) for current sandbox allowances and reset rules.
 
 ## Run the tests offline
 
@@ -203,8 +189,9 @@ refreshes fixtures. Dependency changes are manual quarterly work; automated
 dependency PRs are not configured.
 
 See also:
-[How do I build a WhatsApp bot with Next.js?](../hellohop-nextjs-whatsapp-bot/README.md).
-The Lovable example is planned; no published repository URL is assumed.
+
+- [How do I build a WhatsApp bot with Next.js?](https://github.com/socialgroundco/hellohop-nextjs-whatsapp-bot)
+- [How do I add WhatsApp to my Lovable app?](https://github.com/socialgroundco/hellohop-lovable-whatsapp)
 
 ## Support
 
