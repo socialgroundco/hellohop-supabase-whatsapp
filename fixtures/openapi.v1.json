@@ -488,9 +488,14 @@
                 },
                 "example": {
                   "name": "Example",
-                  "state": "NEW"
-                },
-                "x-hellohop-example-source": "schema-derived"
+                  "state": "NEW",
+                  "egress": {
+                    "mode": "url",
+                    "fingerprint": "abcdef012345abcd",
+                    "pending_restart": false,
+                    "applied_at": null
+                  }
+                }
               }
             }
           },
@@ -566,9 +571,14 @@
                 },
                 "example": {
                   "name": "Example",
-                  "state": "NEW"
-                },
-                "x-hellohop-example-source": "schema-derived"
+                  "state": "NEW",
+                  "egress": {
+                    "mode": "url",
+                    "fingerprint": "abcdef012345abcd",
+                    "pending_restart": false,
+                    "applied_at": null
+                  }
+                }
               }
             }
           },
@@ -5179,9 +5189,14 @@
                 },
                 "example": {
                   "name": "Example",
-                  "state": "NEW"
-                },
-                "x-hellohop-example-source": "schema-derived"
+                  "state": "NEW",
+                  "egress": {
+                    "mode": "url",
+                    "fingerprint": "abcdef012345abcd",
+                    "pending_restart": false,
+                    "applied_at": null
+                  }
+                }
               }
             }
           },
@@ -7521,11 +7536,16 @@
             "type": "boolean",
             "readOnly": true,
             "description": "Whether this non-sandbox channel is active and the owning account has at least one active non-sandbox channel. Included with every paid number; complimentary, promotional and admin grants qualify. A disconnected channel can be eligible, but must connect before starting a check."
+          },
+          "egress": {
+            "$ref": "#/components/schemas/Egress",
+            "readOnly": true
           }
         },
         "required": [
           "name",
-          "state"
+          "state",
+          "egress"
         ],
         "description": "The channel's state. This is every field the public API returns for a session. The fields listed under x-operator-only (the operator's phone lane and the legacy send_cap_exempt row kept for rollback) are operator-only: they are never returned to a channel token or to a customer account, only to the operator.",
         "x-operator-only": [
@@ -8091,6 +8111,47 @@
           "url",
           "secret_set"
         ]
+      },
+      "Egress": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "mode",
+          "fingerprint",
+          "pending_restart",
+          "applied_at"
+        ],
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "none",
+              "url",
+              "invalid"
+            ],
+            "readOnly": true
+          },
+          "fingerprint": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[0-9a-f]{16}$",
+            "readOnly": true
+          },
+          "pending_restart": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "applied_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "readOnly": true
+          }
+        }
       }
     }
   }

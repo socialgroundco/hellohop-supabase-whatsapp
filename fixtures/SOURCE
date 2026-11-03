@@ -4,7 +4,7 @@
   "fetched_at": "2026-10-28T07:20:06.679429+00:00",
   "openapi_url": "https://hellohop.app/docs/openapi.json",
   "openapi_source_sha256": "b1d0708a98c7a5c65c873b502963112c9b98543fb51c3bb66e07f9b38167d237",
-  "openapi_vendored_sha256": "6fb255857819a6fb4794eadf837390d2671aacaaaedd33ebc91193bcd6430406",
+  "openapi_vendored_sha256": "5363dd89b580d61f2794a004d52a9c0c5c090b9307103bd5c0b9271493197080",
   "transform": "JSON formatting and literal phone/JID placeholder substitution only; structural schemas preserved. Raw source retained outside repo in item3-evidence/repo2-sources/openapi.json.",
   "docs": {
     "authentication.md": {
@@ -37,5 +37,8 @@
     }
   },
   "envelope_schema_note": "Live OpenAPI has no webhook envelope schema. webhook-envelope.schema.json is explicitly derived from webhook-events.md common envelope, not a claimed OpenAPI schema.",
-  "fixture_note": "Docs examples with synthetic event IDs, channel/message/address placeholders and no display name."
+  "fixture_note": "Docs examples with synthetic event IDs, channel/message/address placeholders and no display name.",
+  "egress_source_url": "https://hellohop.app/docs/openapi.json",
+  "egress_source_sha256": "be06d9e3b5dcb21c46a1e287798042ee8a4f1eacfc39fe37dffd4d1ee0991681",
+  "egress_fetched_at": "2026-11-03T21:10:30.311234Z"
 }
